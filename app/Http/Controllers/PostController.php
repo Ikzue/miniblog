@@ -2,86 +2,83 @@
 
 namespace App\Http\Controllers;
 
-use Exception;
 use Illuminate\Http\Request;
 use App\Models\Post;
 
 class PostController extends Controller
 {
     protected $keys = [
-        "title",
-        "content",
-        "user_id"
+        'title',
+        'content',
+        'user_id'
     ];
 
+    protected $post_put_rules = [
+        'title' => 'required',
+        'content' => 'required',
+        'user_id' => 'required|exists:users,id'
+    ];
 
-    // GET posts
-    public function index()
-    {
-        return Post::all();
-    }
+    protected $patch_rules = [
+        'title' => 'filled',
+        'content' => 'filled',
+        'user_id' => 'filled|exists:users,id',
+    ];
+
 
     // GET posts/create - Display creation form
     public function create()
     {
-        return [
-            "title" => "",
-            "content" => "",
-            "user_id" => "",
-        ];
+        return array_fill_keys($this->keys, '');
     }
 
     // POST posts - Create
     public function store(Request $request)
     {
-        try {
-            $input_form = $this->get_input_form($request, True);
-        }
-        catch (Exception $e) {
-            return ["message" => "Error in input: " . $e->getMessage()];
-        }
+        $input = $request->validate($this->post_put_rules);
 
         $post = new Post;
         foreach($this->keys as $key){
-            $post->$key = $input_form[$key];
+            $post->$key = $input[$key];
         }
         $post->save();
         return $post;
     }
 
-    // GET posts/{id} - Show object
+    // GET posts - Show all
+    public function index()
+    {
+        return Post::all();
+    }
+
+    // GET posts/{id} - Show
     public function show(string $id)
     {
         return Post::find($id);
     }
 
-    // GET posts/{id} - Display edition form
+    // GET posts/{id}/edit - Show edition form
     public function edit(string $id)
     {
         $post = Post::find($id);
-        return $post;
+        return $post->makeHidden('id', 'created_at', 'updated_at');
     }
 
     // PUT/PATCH posts/{id}
     public function update(Request $request, string $id)
     {
-        try {
-            if ($request->method() == "PUT")
-            {
-                $input_form = $this->get_input_form($request, True);
-            }
-            else {
-                $input_form = $this->get_input_form($request);
-            }
+        if ($request->method() == 'PUT')
+        {
+            $input = $request->validate($this->post_put_rules);
         }
-        catch (Exception $e) {
-            return ["message" => "Error in input: " . $e->getMessage()];
+        else {
+            $input = $request->validate($this->patch_rules);
         }
 
         $post = Post::find($id);
         foreach($this->keys as $key){
-            if (array_key_exists($key, $input_form)){
-                $post->$key = $input_form[$key];
+            if (array_key_exists($key, $input)){
+                $post->$key = $input[$key];
             }
         }
         $post->save();
@@ -92,31 +89,10 @@ class PostController extends Controller
     public function destroy(string $id)
     {
         $post = Post::find($id);
-        if(!$post){
-            return ["message" => "Post couldn't be found"];
+        if(! $post){
+            return ['message' => "Post couldn't be found"];
         }
-        else {
-            $post->delete();
-            return ["message" => "Post deleted"];
-        }
-    }
-
-    private function get_input_form($request, $check_missing = false) {
-        $body = $request->getContent();
-        if (!json_validate($body)){
-            throw new Exception("Please input valid JSON.");
-        }
-        $input_form = json_decode($body, true);
-    
-        if ($check_missing) {
-            $missing = [];
-            foreach($this->keys as $key)
-                if(!array_key_exists($key, $input_form))
-                    array_push($missing, $key);
-            if ($missing)
-                throw new Exception("Missing fields: " .implode(", ", $missing));    
-        }
-
-        return $input_form;
+        $post->delete();
+        return ['message' => 'Post deleted'];
     }
 }

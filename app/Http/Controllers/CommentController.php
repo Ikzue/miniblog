@@ -2,86 +2,84 @@
 
 namespace App\Http\Controllers;
 
-use Exception;
 use Illuminate\Http\Request;
 use App\Models\Comment;
 
 class CommentController extends Controller
 {
     protected $keys = [
-        "content",
-        "user_id",
-        "post_id"
+        'content',
+        'user_id',
+        'post_id'
     ];
 
+    protected $post_put_rules = [
+        'content' => 'required',
+        'user_id' => 'required|exists:users,id',
+        'post_id' => 'required|exists:posts,id'
+    ];
 
-    // GET comments
-    public function index()
-    {
-        return Comment::all();
-    }
+    protected $patch_rules = [
+        'content' => 'filled',
+        'user_id' => 'filled|exists:users,id',
+        'post_id' => 'filled|exists:posts,id'
+    ];
+
 
     // GET comments/create - Display creation form
     public function create()
     {
-        return [
-            "content" => "",
-            "user_id" => "",
-            "post_id" => "",
-        ];
+        return array_fill_keys($this->keys, '');
     }
 
     // POST comments - Create
     public function store(Request $request)
     {
-        try {
-            $input_form = $this->get_input_form($request, True);
-        }
-        catch (Exception $e) {
-            return ["message" => "Error in input: " . $e->getMessage()];
-        }
+        $input = $request->validate($this->post_put_rules);
 
         $comment = new Comment;
         foreach($this->keys as $key){
-            $comment->$key = $input_form[$key];
+            $comment->$key = $input[$key];
         }
         $comment->save();
         return $comment;
     }
 
-    // GET comments/{id} - Show object
+    // GET comments - Show all comments
+    public function index()
+    {
+        return Comment::all();
+    }
+
+    // GET comments/{id} - Show comment
     public function show(string $id)
     {
         return Comment::find($id);
     }
 
-    // GET comments/{id} - Display edition form
+    // GET comments/{id}/edit - Show edition form
     public function edit(string $id)
     {
         $comment = Comment::find($id);
-        return $comment;
+        return $comment->makeHidden('id', 'created_at', 'updated_at');
     }
 
     // PUT/PATCH comments/{id}
     public function update(Request $request, string $id)
     {
-        try {
-            if ($request->method() == "PUT")
-            {
-                $input_form = $this->get_input_form($request, True);
-            }
-            else {
-                $input_form = $this->get_input_form($request);
-            }
+        if ($request->method() == 'PUT')
+        {
+            $input = $request->validate($this->post_put_rules);
         }
-        catch (Exception $e) {
-            return ["message" => "Error in input: " . $e->getMessage()];
+        else {
+            $input = $request->validate($this->patch_rules);
         }
+
 
         $comment = Comment::find($id);
         foreach($this->keys as $key){
-            if (array_key_exists($key, $input_form)){
-                $comment->$key = $input_form[$key];
+            if (array_key_exists($key, $input)){
+                $comment->$key = $input[$key];
             }
         }
         $comment->save();
@@ -92,31 +90,10 @@ class CommentController extends Controller
     public function destroy(string $id)
     {
         $comment = Comment::find($id);
-        if(!$comment){
-            return ["message" => "Comment couldn't be found"];
+        if(! $comment){
+            return ['message' => "Comment couldn't be found"];
         }
-        else {
-            $comment->delete();
-            return ["message" => "Comment deleted"];
-        }
-    }
-
-    private function get_input_form($request, $check_missing = false) {
-        $body = $request->getContent();
-        if (!json_validate($body)){
-            throw new Exception("Please input valid JSON.");
-        }
-        $input_form = json_decode($body, true);
-    
-        if ($check_missing) {
-            $missing = [];
-            foreach($this->keys as $key)
-                if(!array_key_exists($key, $input_form))
-                    array_push($missing, $key);
-            if ($missing)
-                throw new Exception("Missing fields: " .implode(", ", $missing));    
-        }
-
-        return $input_form;
+        $comment->delete();
+        return ['message' => 'Comment deleted'];
     }
 }
