@@ -36,7 +36,6 @@ class CommentController extends Controller
     public function store(Request $request)
     {
         $input = $request->validate($this->post_put_rules);
-
         $comment = new Comment;
         foreach($this->keys as $key){
             $comment->$key = $input[$key];
@@ -45,10 +44,15 @@ class CommentController extends Controller
         return $comment;
     }
 
-    // GET comments - Show all comments
-    public function index()
+    // GET comments - Show list of comments
+    public function index(Request $request)
     {
-        return Comment::all();
+        $comments = Comment::query();
+        $post_id = $request->query('post_id');
+        if ($post_id) {
+            $comments = $comments->where('post_id', $post_id);
+        }
+        return $comments->orderByDesc('created_at')->with('user:id,name')->get();
     }
 
     // GET comments/{id} - Show comment

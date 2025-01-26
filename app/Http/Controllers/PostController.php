@@ -36,19 +36,20 @@ class PostController extends Controller
     public function store(Request $request)
     {
         $input = $request->validate($this->post_put_rules);
-
+    
         $post = new Post;
         foreach($this->keys as $key){
             $post->$key = $input[$key];
         }
         $post->save();
-        return $post;
+    
+        return redirect()->route('posts.index')->with('success', 'Post created successfully');
     }
 
     // GET posts - Show all
     public function index()
     {
-        return Post::all();
+        return Post::query()->orderByDesc('created_at')->get();
     }
 
     // GET posts/{id} - Show
