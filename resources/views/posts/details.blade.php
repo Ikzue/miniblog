@@ -2,8 +2,17 @@
 
 @section('content')
 <!-- Post title and content -->
-<h1 id='title'></h1>
+<div class='flex items-center space-x-2'>
+    <h1 id='title'>
+        
+    </h1>
+</div>
+<div id="edit-delete" hidden>
+    <a class='clickable' href="{{ route('posts.update.ui', ['post' => $post->id]) }}">Edit</a>
+    - <btn class="clickable" id='delete-button'>Delete</btn>
+</div>
 <p id='content'></p>
+
 <a></a>
 <!-- Comment list -->
 <hr class='m-2'>
@@ -12,7 +21,7 @@
     <ul id='comments'></ul>
     <!-- Comment submission -->
     <textarea cols='30' rows='2' id='add-comment'></textarea>
-    <button class='block' id='submit-comment'>Submit</button>
+    <button class='block btn' id='submit-comment'>Submit</button>
     <p id='submit-error'></p>
 </div>
 
@@ -23,6 +32,7 @@
     const postId = '{{ $post->id }}';
     const submitComment = document.getElementById("submit-comment");
     const submitError = document.getElementById('submit-error');
+    const deleteButton = document.getElementById('delete-button');
     
     document.addEventListener('DOMContentLoaded', async function (){
         loadPost(postId);
@@ -34,6 +44,18 @@
         saveComment(comment, postId, submitError);
     })
 
+    deleteButton.addEventListener('click', function() {
+        if (confirm('Are you sure you want to delete this post?')){
+            axios.delete(
+                "{{ route('posts.destroy', ['post' => $post->id]) }}"
+            ).then(
+                () => location.assign("{{ route('posts.list.ui') }}")
+            ).catch(
+                () => alert('Failed to delete post')
+            );
+        };
+    })
+
     async function loadPost(postId) {
         const postResponse = await fetch(`/api/posts/${postId}`);
         const title = document.getElementById('title');
@@ -42,6 +64,10 @@
             const post = await postResponse.json();
             title.textContent = post.title;
             content.textContent = post.content;
+            if (post.is_own_post) {
+                const editDelete = document.getElementById('edit-delete');
+                editDelete.hidden = false;
+            }
         }
         else {
             content.textContent = "Failed to load blog post..."

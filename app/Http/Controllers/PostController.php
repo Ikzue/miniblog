@@ -31,13 +31,14 @@ class PostController extends Controller
     }
 
     // GET posts/{id} - Show
-    public function show(Post $post)
+    public function show(Request $request, Post $post)
     {
+        $post->is_own_post = $post->user_id == $request->user()->id;
         return $post;
     }
 
     // PUT/PATCH posts/{id}
-    public function update(Request $request, $post)
+    public function update(Request $request, Post $post)
     {
         if ($request->method() != 'PUT')
         {
@@ -49,7 +50,6 @@ class PostController extends Controller
             'user_id' => 'missing',
         ]);
 
-
         $post->fill($input)->save();
         return $post;
     }
@@ -57,6 +57,7 @@ class PostController extends Controller
     // DELETE posts/{id}
     public function destroy(Post $post)
     {
+        $post->comments()->delete();
         $post->delete();
         return response()->json(['message' => 'Post deleted'], 204);
     }
