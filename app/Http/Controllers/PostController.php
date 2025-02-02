@@ -12,9 +12,8 @@ class PostController extends Controller
     // GET posts
     public function index()
     {
-        return Post::query()->orderByDesc('created_at')->get();
+        return Post::query()->with('user:id,name')->orderByDesc('created_at')->get();
     }
-
 
     // POST posts - Create
     public function store(Request $request)

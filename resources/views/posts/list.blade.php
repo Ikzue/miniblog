@@ -39,7 +39,7 @@
                 let $id = post.id;
                 addCell(postRow, post, 'title', `/posts/details/${post.id}`);
                 addCell(postRow, post, 'content');
-                addCell(postRow, post, 'user_id');
+                addCell(postRow, post, 'user.name');
                 postsTable.appendChild(postRow);
             })
         }
@@ -52,11 +52,12 @@
 
     function addCell(postRow, post, attr, href=""){
         const cell = document.createElement('td');
+        const attrVal = attr.split('.').reduce((props, key)=>props&&props[key]||null, post)
         if (href) {
-            cell.innerHTML = `<a class="clickable" href="${href}">${post[attr]}</a>`
+            cell.innerHTML = `<a class="clickable" href="${href}">${attrVal}</a>`
         }
         else{
-            cell.innerHTML = post[attr];
+            cell.innerHTML = attrVal;
         }
 
         postRow.appendChild(cell);

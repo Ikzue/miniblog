@@ -28,9 +28,10 @@
             let comments = await response.json();
             comments.forEach(comment => {
                 const commentRow = document.createElement('tr');
+                console.log(comment);
                 addCell(commentRow, comment, 'content');
-                addCell(commentRow, comment, 'user_id');
-                addCell(commentRow, comment, 'post_id');
+                addCell(commentRow, comment, 'user.name');
+                addCell(commentRow, comment, 'post.title');
                 commentsTable.appendChild(commentRow)
             })
         }
@@ -44,6 +45,7 @@
     function addCell(commentRow, post, attr){
         const cell = document.createElement('td');
         cell.innerHTML = post[attr];
+        cell.innerHTML = attr.split('.').reduce((props, key)=>props&&props[key]||null, post)
         commentRow.appendChild(cell);
     }
 </script>

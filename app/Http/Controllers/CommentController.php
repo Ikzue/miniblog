@@ -16,7 +16,7 @@ class CommentController extends Controller
         if ($post_id) {
             $comments = $comments->where('post_id', $post_id);
         }
-        return $comments->orderByDesc('created_at')->with('user:id,name')->get();
+        return $comments->with(['user:id,name', 'post:id,title'])->orderByDesc('created_at')->get();
     }
 
 
