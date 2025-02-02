@@ -16,7 +16,6 @@
     <input type="text" id="title" name="title">
     <label for="content">Content:</label>
     <textarea type="text" id="content" name="content"></textarea>
-    <input type="hidden" name="user_id" value="{{ Auth::user()->id }}">
     <button>Save</button>
 </form>
 @endsection

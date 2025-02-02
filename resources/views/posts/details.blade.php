@@ -17,8 +17,7 @@
 
 @section('script')
 <script>
-    const postId = '{{ $id }}';
-    const userId = "{{ Auth::user()->id }}";
+    const postId = '{{ $post->id }}';
     const submitComment = document.getElementById("submit-comment");
     const submitError = document.getElementById('submit-error');
     
@@ -29,7 +28,7 @@
 
     submitComment.addEventListener('click', function() {
         const comment = document.getElementById('add-comment').value;
-        saveComment(comment, postId, userId, submitError);
+        saveComment(comment, postId, submitError);
     })
 
     async function loadPost(postId) {
@@ -63,7 +62,7 @@
         }
     }
     
-    async function saveComment(comment, postId, userId, submitError) {
+    async function saveComment(comment, postId,  submitError) {
         if(comment) {
             const response = await fetch("{{ route('comments.store') }}", {
                 method: "POST",
@@ -74,13 +73,13 @@
                 body: JSON.stringify({
                     content: comment,
                     post_id: postId,
-                    user_id: userId
                 })
             });
-            if(response.status_code = 201) {
+            if(response.status = 201) {
+                const responseBody = await response.json();
                 location.reload();
             }
-            else if(response.status_code = 422) {
+            else if(response.status = 422) {
                 const responseBody = await response.json();
                 submitError.textContent = responseBody.message;
             }
@@ -89,7 +88,7 @@
             }
         }
         else {
-            submitError.textContent = 'Please input your comment before submission.';
+            submitError.textContent = 'Please add your comment before submission.';
         }
     }
 </script>

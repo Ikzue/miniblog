@@ -3,6 +3,8 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
+use App\Models\Post;
+use App\Models\Comment;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -30,11 +32,11 @@ Route::middleware('auth')->group(function () {
         Route::get('/list', function() {
             return view('posts.list');
         })->name('posts.list.ui');
-        Route::get('/details/{id}', function(string $id) {
-            return view('posts.details', ['id' => $id]);
+        Route::get('/details/{post}', function(Post $post) {
+            return view('posts.details', ['post' => $post]);
         })->name('posts.details.ui');
-        Route::get('/update/{id}', function(string $id) {
-            return view('posts.update', ['id' => $id]);
+        Route::get('/update/{post}', function(Post $post) {
+            return view('posts.update', ['post' => $post]);
         })->name('posts.update.ui');
     });
 
@@ -42,8 +44,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/list', function() {
             return view('comments.list');
         })->name('comments.list.ui');
-        Route::get('/update/{id}', function(string $id) {
-            return view('comments.update', ['id' => $id]);
+        Route::get('/update/{id}', function(Comment $comment) {
+            return view('comments.update', ['comment' => $comment]);
         })->name('comments.update.ui');;
     });
 });

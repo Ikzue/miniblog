@@ -3,48 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use App\Models\Comment;
 
 class CommentController extends Controller
 {
-    protected $keys = [
-        'content',
-        'user_id',
-        'post_id'
-    ];
-
-    protected $post_put_rules = [
-        'content' => 'required',
-        'user_id' => 'required|exists:users,id',
-        'post_id' => 'required|exists:posts,id'
-    ];
-
-    protected $patch_rules = [
-        'content' => 'filled',
-        'user_id' => 'filled|exists:users,id',
-        'post_id' => 'filled|exists:posts,id'
-    ];
-
-
-    // GET comments/create - Display creation form
-    public function create()
-    {
-        return array_fill_keys($this->keys, '');
-    }
-
-    // POST comments - Create
-    public function store(Request $request)
-    {
-        $input = $request->validate($this->post_put_rules);
-        $comment = new Comment;
-        foreach($this->keys as $key){
-            $comment->$key = $input[$key];
-        }
-        $comment->save();
-        return $comment;
-    }
-
-    // GET comments - Show list of comments
+    // GET comments 
     public function index(Request $request)
     {
         $comments = Comment::query();
@@ -55,49 +19,46 @@ class CommentController extends Controller
         return $comments->orderByDesc('created_at')->with('user:id,name')->get();
     }
 
-    // GET comments/{id} - Show comment
-    public function show(string $id)
+
+    // POST comments - Create
+    public function store(Request $request)
     {
-        return Comment::find($id);
+        $input = $request->validate([
+            'content' => 'required',
+            'post_id' => 'required',
+            'user_id' => 'missing',
+        ]);
+        $request->user()->comments()->create($input);
+        return response()->json(['message' => 'Comment created'], 201);
     }
 
-    // GET comments/{id}/edit - Show edition form
-    public function edit(string $id)
+    // GET comments/{id} - Show comment
+    public function show(Comment $comment)
     {
-        $comment = Comment::find($id);
-        return $comment->makeHidden('id', 'created_at', 'updated_at');
+        return $comment;
     }
 
     // PUT/PATCH comments/{id}
-    public function update(Request $request, string $id)
+    public function update(Request $request, Comment $comment)
     {
-        if ($request->method() == 'PUT')
+        if ($request->method() != 'PUT')
         {
-            $input = $request->validate($this->post_put_rules);
+            return Response::json(['error' => 'Incorrect method'], 405);
         }
-        else {
-            $input = $request->validate($this->patch_rules);
-        }
+        $input = $request->validate([
+            'content' => 'required',
+            'post_id' => 'missing',
+            'user_id' => 'missing',
+        ]);
 
-
-        $comment = Comment::find($id);
-        foreach($this->keys as $key){
-            if (array_key_exists($key, $input)){
-                $comment->$key = $input[$key];
-            }
-        }
-        $comment->save();
+        $comment->fill($input)->save();
         return $comment;
     }
 
     // DELETE comments/{id}
-    public function destroy(string $id)
+    public function destroy(comment $comment)
     {
-        $comment = Comment::find($id);
-        if(! $comment){
-            return ['message' => "Comment couldn't be found"];
-        }
         $comment->delete();
-        return ['message' => 'Comment deleted'];
+        return response()->json(['message' => 'Comment deleted'], 204);
     }
 }
