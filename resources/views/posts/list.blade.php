@@ -1,15 +1,30 @@
 @extends('base')
 
 @section('content')
-<a href="{{ route('posts.create.ui') }}">Create post</a>
-<table id='table-posts'>
+
+@session('success') 
+<p>{{ $value }}</p>
+@endsession
+
+<div class="flex items-center justify-between mt-2">
+    <h2 class="text-xl">Posts</h2>
+    <a class="btn text-black" href="{{ route('posts.create.ui') }}">Create post</a>
+</div>
+<div>
+<table class="min-w-full divide-y-2">
+    <thead>
     <tr>
         <th>Title</th>
         <th>Content</th>
         <th>User</th>
     </tr>
+    </thead>
+    <tbody id='table-posts'></tbody>
 </table>
+</div>
+
 @endsection
+
 
 @section('script')
 <script>
@@ -38,11 +53,12 @@
     function addCell(postRow, post, attr, href=""){
         const cell = document.createElement('td');
         if (href) {
-            cell.innerHTML = `<a href="${href}">${post[attr]}</a>`
+            cell.innerHTML = `<a class="clickable" href="${href}">${post[attr]}</a>`
         }
         else{
             cell.innerHTML = post[attr];
         }
+
         postRow.appendChild(cell);
     }
 </script>

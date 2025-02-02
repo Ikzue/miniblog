@@ -5,14 +5,17 @@
 <h1 id='title'></h1>
 <p id='content'></p>
 <a></a>
-<hr>
 <!-- Comment list -->
-<h2>Comment list</h3>
-<ul id='comments'></ul>
-<!-- Comment submission -->
-<textarea cols="30" rows="2" id="add-comment"></textarea>
-<button id="submit-comment">Submit</button>
-<p id="submit-error"></p>
+<hr class='m-2'>
+<div class='flex-col justify-start space-y-2'>
+    <h2 class='font-semibold'>List of comments</h3>
+    <ul id='comments'></ul>
+    <!-- Comment submission -->
+    <textarea cols='30' rows='2' id='add-comment'></textarea>
+    <button class='block' id='submit-comment'>Submit</button>
+    <p id='submit-error'></p>
+</div>
+
 @endsection
 
 @section('script')
@@ -51,10 +54,16 @@
         if (commentsResponse.ok) {
             const comments = await commentsResponse.json();
             comments.forEach(comment => {
-                const elem = document.createElement('li');
-                const dateWithoutMs = comment.created_at.substring(0, 19);
-                elem.innerText = `${comment.user.name} - ${dateWithoutMs}\r\n${comment.content}`;
-                commentsList.appendChild(elem);
+                const li = document.createElement('li');
+                const commentHeader = document.createElement('p');
+                const commentContent = document.createElement('p');
+                const dateWithoutMS = comment.created_at.substring(0, 19);
+                commentHeader.classList.add('italic')
+                commentHeader.innerText = `${comment.user.name} - ${dateWithoutMS}`;
+                commentContent.innerText = comment.content;
+                li.appendChild(commentHeader);
+                li.appendChild(commentContent);
+                commentsList.appendChild(li);
             });
         }
         else{

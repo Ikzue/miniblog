@@ -1,13 +1,20 @@
 @extends('base')
 
 @section('content')
+<h2 class="text-xl mt-4">Comments</h2>
 
-<table id='table-comments'>
-    <tr>
-        <th>Content</th>
-        <th>User</th>
-        <th>Post</th>
-    </tr>
+<table class="min-w-full divide-y-2">
+    <thead>
+        <tr>
+            <th>Comment</th>
+            <th>User</th>
+            <th>Post</th>
+        </tr>
+    </thead>
+    <tbody id='table-comments'>
+
+    </tbody>
+
 </table>
 @endsection
 
