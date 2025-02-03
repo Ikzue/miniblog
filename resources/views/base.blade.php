@@ -16,7 +16,7 @@
     <nav class="my-1">
         <a href="/">Home</a> - 
         <a href="{{ route('posts.list.ui') }}">Posts</a> -
-        <a href="{{ route('comments.list.ui') }}">Comments</a>
+        <a href="{{ route('comments.list.ui') }}">My comments</a>
     </nav>
     <hr>
     @section('content')

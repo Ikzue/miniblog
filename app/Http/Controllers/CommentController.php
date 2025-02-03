@@ -11,11 +11,19 @@ class CommentController extends Controller
     // GET comments 
     public function index(Request $request)
     {
-        $comments = Comment::query();
-        $post_id = $request->query('post_id');
-        if ($post_id) {
-            $comments = $comments->where('post_id', $post_id);
+        $post_id = $request->query('post_id') ?? null;  // Post details page
+        $user_id = $request->query('my_comments') == 'true' ? $request->user()->id : null;  // User's comments page
+        if ($post_id && $user_id)
+        {
+            return Response::json(['error' => "Choose to show either a post's comments or a user's comments"], 400);
         }
+
+        return Comment::with(['user:id,name', 'post:id,title'])
+            ->when($post_id, function($query) use ($post_id) { $query->where('post_id', $post_id); })
+            ->when($user_id, function($query) use ($user_id) { $query->where('user_id', $user_id); })
+            ->orderByDesc('created_at')
+            ->get();
+
         return $comments->with(['user:id,name', 'post:id,title'])->orderByDesc('created_at')->get();
     }
 
