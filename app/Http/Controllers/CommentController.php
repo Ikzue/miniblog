@@ -23,8 +23,6 @@ class CommentController extends Controller
             ->when($user_id, function($query) use ($user_id) { $query->where('user_id', $user_id); })
             ->orderByDesc('created_at')
             ->get();
-
-        return $comments->with(['user:id,name', 'post:id,title'])->orderByDesc('created_at')->get();
     }
 
 

@@ -21,5 +21,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 
-Route::resource('posts', PostController::class)->except(['create', 'edit']);
-Route::resource('comments', CommentController::class)->except(['create', 'edit']);
+Route::resource('posts', PostController::class)->middleware('auth')->except(['create', 'edit']);
+Route::resource('comments', CommentController::class)->middleware('auth')->except(['create', 'edit']);

@@ -17,7 +17,7 @@ use App\Models\Comment;
 */
 
 Route::get('/', function () {
-    return view('dashboard');
+    return view('posts.list');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
