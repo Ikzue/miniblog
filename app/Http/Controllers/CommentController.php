@@ -19,8 +19,8 @@ class CommentController extends Controller
         }
 
         return Comment::with(['user:id,name', 'post:id,title'])
-            ->when($post_id, function($query) use ($post_id) { $query->where('post_id', $post_id); })
-            ->when($user_id, function($query) use ($user_id) { $query->where('user_id', $user_id); })
+            ->when($post_id, fn ($query) => $query->where('post_id', $post_id))
+            ->when($user_id, fn($query) => $query->where('user_id', $user_id))
             ->orderByDesc('created_at')
             ->get();
     }

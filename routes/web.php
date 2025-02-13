@@ -26,27 +26,15 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::prefix('posts')->group(function () {
-        Route::get('/create', function() {
-            return view('posts.create');
-        })->name('posts.create.ui');
-        Route::get('/list', function() {
-            return view('posts.list');
-        })->name('posts.list.ui');
-        Route::get('/details/{post}', function(Post $post) {
-            return view('posts.details', ['post' => $post]);
-        })->name('posts.details.ui');
-        Route::get('/update/{post}', function(Post $post) {
-            return view('posts.update', ['post' => $post]);
-        })->name('posts.update.ui');
+        Route::get('/create', fn () => view('posts.create'))->name('posts.create.ui');
+        Route::get('/list', fn () => view('posts.list'))->name('posts.list.ui');
+        Route::get('/details/{post}', fn (Post $post) => view('posts.details', ['post' => $post]))->name('posts.details.ui');
+        Route::get('/update/{post}', fn (Post $post) => view('posts.update', ['post' => $post]))->name('posts.update.ui');
     });
 
     Route::prefix('comments')->group(function () {
-        Route::get('/list', function() {
-            return view('comments.list');
-        })->name('comments.list.ui');
-        Route::get('/update/{id}', function(Comment $comment) {
-            return view('comments.update', ['comment' => $comment]);
-        })->name('comments.update.ui');;
+        Route::get('/list', fn () => view('comments.list'))->name('comments.list.ui');
+        Route::get('/update/{id}', fn (Comment $comment) => view('comments.update', ['comment' => $comment]))->name('comments.update.ui');
     });
 });
 
