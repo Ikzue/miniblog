@@ -14,7 +14,7 @@ class ListPostTest extends TestCase
 
     public function test_no_auth(): void
     {
-        $response = $this->get(route('posts.index'));
+        $response = $this->get("/api/posts");
         $response->assertRedirectToRoute('login');
     }
 
@@ -23,7 +23,7 @@ class ListPostTest extends TestCase
         $user = User::factory()->create();
 
         $this->actingAs($user);
-        $response = $this->get(route('posts.index'));
+        $response = $this->get("/api/posts");
     
         $response->assertStatus(200);
     }
@@ -31,10 +31,10 @@ class ListPostTest extends TestCase
     public function test_format(): void
     {
         $user = User::factory()->create();
-        $post = Post::factory()->withUser($user)->create();
+        $post = Post::factory()->for($user)->create();
 
-        $this->actingAs($user);
-        $response = $this->get(route('posts.index'));
+        $this->actingAs($post->user);
+        $response = $this->get("/api/posts");
 
         $response->assertExactJson([
             ['id' => $post->id,
@@ -43,8 +43,8 @@ class ListPostTest extends TestCase
             'title' => $post->title,
             'content' => $post->content,
             'user' => [
-                'id' => $user->id,
-                'name' => $user->name
+                'id' => $post->user->id,
+                'name' => $post->user->name
                 ]
             ]
         ]);
@@ -52,20 +52,23 @@ class ListPostTest extends TestCase
 
     public function test_ordering(): void{
         $user = User::factory()->create();
+        $createdAtDates = [
+            '2025-02-01 12:00:00',
+            // id順じゃないことを証明するため、順番をバラバラに
+            '2025-02-01 13:00:00',
+            '2025-02-01 10:00:00',
+            '2025-02-01 09:00:00'
+        ];
         Post::factory()
-        ->withUser($user)
+        ->for($user)
         ->count(4)
+        ->sequence( fn ($sequence) => ['created_at' => $createdAtDates[$sequence->index]])
         ->create();
 
-        $posts = Post::orderBy('created_at', 'desc')->get();
-        $dates = $posts->pluck('created_at')->all();
-        $dates = array_map(
-            function($date){ return $date->toISOString();},
-            $dates
-        );
+        $dates = Post::orderBy('created_at', 'desc')->pluck('created_at')->map->toISOString()->all();
 
         $this->actingAs($user);
-        $response = $this->get(route('posts.index'));
+        $response = $this->get("/api/posts");
         $response->assertSeeInOrder($dates);
     }
 

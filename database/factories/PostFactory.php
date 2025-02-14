@@ -25,12 +25,4 @@ class PostFactory extends Factory
             'updated_at' => $updatedAt,
         ];
     }
-
-    public function withUser($user): Factory {
-        return $this->state(function () use ($user) {
-            return [
-                'user_id' => $user->id,
-            ];
-        });
-    }
 }

@@ -19,22 +19,8 @@ class CommentFactory extends Factory
 
         return [
             'content' => fake()->sentence(60),
+            'created_at' => $createdAt,
+            'updated_at' => $updatedAt,
         ];
-    }
-
-    public function withUser($user): Factory {
-        return $this->state(function () use ($user) {
-            return [
-                'user_id' => $user->id,
-            ];
-        });
-    }
-
-    public function withPost($post): Factory {
-        return $this->state(function () use ($post) {
-            return [
-                'post_id' => $post->id,
-            ];
-        });
     }
 }
