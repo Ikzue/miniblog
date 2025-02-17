@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use App\Models\Post;
 
 
@@ -18,7 +17,6 @@ class PostController extends Controller
     // POST posts - Create
     public function store(Request $request)
     {
-        
         $input = $request->validate([
             'title' => 'required',
             'content' => 'required',
@@ -41,7 +39,11 @@ class PostController extends Controller
     {
         if ($request->method() != 'PUT')
         {
-            return Response::json(['error' => "Incorrect method"], 405);
+            return response()->json(['error' => "Incorrect method"], 405);
+        }
+        else if ($request->user()->id != $post->user_id)
+        {
+            return response()->json(['error' => "Access denied"], 403);
         }
         $input = $request->validate([
             'title' => 'required',
@@ -54,8 +56,12 @@ class PostController extends Controller
     }
 
     // DELETE posts/{id}
-    public function destroy(Post $post)
+    public function destroy(Request $request, Post $post)
     {
+        if ($request->user()->id != $post->user_id)
+        {
+            return response()->json(['error' => "Access denied"], 403);
+        }
         $post->comments()->delete();
         $post->delete();
         return response()->json(['message' => 'Post deleted'], 204);

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use App\Models\Comment;
 
 class CommentController extends Controller
@@ -15,7 +14,7 @@ class CommentController extends Controller
         $user_id = $request->query('my_comments') == 'true' ? $request->user()->id : null;  // User's comments page
         if ($post_id && $user_id)
         {
-            return Response::json(['error' => "Choose to show either a post's comments or a user's comments"], 400);
+            return response()->json(['error' => "Choose to show either a post's comments or a user's comments"], 400);
         }
 
         return Comment::with(['user:id,name', 'post:id,title'])
@@ -49,7 +48,11 @@ class CommentController extends Controller
     {
         if ($request->method() != 'PUT')
         {
-            return Response::json(['error' => 'Incorrect method'], 405);
+            return response()->json(['error' => 'Incorrect method'], 405);
+        }
+        else if ($request->user()->id != $comment->user_id)
+        {
+            return response()->json(['error' => "Access denied"], 403);
         }
         $input = $request->validate([
             'content' => 'required',
@@ -62,8 +65,12 @@ class CommentController extends Controller
     }
 
     // DELETE comments/{id}
-    public function destroy(comment $comment)
+    public function destroy(Request $request, Comment $comment)
     {
+        if ($request->user()->id != $comment->user_id)
+        {
+            return response()->json(['error' => "Access denied"], 403);
+        }
         $comment->delete();
         return response()->json(['message' => 'Comment deleted'], 204);
     }
