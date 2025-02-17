@@ -6,29 +6,54 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 use App\Models\Post;
+use App\Models\Comment;
 use App\Models\User;
 
 class DeletePostTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_no_auth(): void
+    private function authUser()
     {
-        $this->markTestIncomplete("Check DELETE 'posts.destroy' redirect");
+        $user = User::factory()->create();
+        $this->actingAs($user);
+        return $user;
     }
 
-    public function test_auth(): void
+    public function test_no_auth(): void
     {
-        $this->markTestIncomplete();
+        $user = User::factory()->create();
+        $post = Post::factory()->for($user)->create();
+
+        $response = $this->delete("/api/posts/{$post->id}");
+        $response->assertRedirectToRoute('login');
+        $this->assertDatabaseCount('posts', 1);
     }
 
     public function test_delete_OK(): void
     {
-        $this->markTestIncomplete("Assert fields new post and number of posts in db");
+        $user = $this->authUser();
+        $post = Post::factory()->for($user)->create();
+        Comment::factory()->count(2)->for($user)->for($post)->create();
+
+        $response = $this->delete("/api/posts/{$post->id}");
+        $response->assertStatus(204);
+
+        $this->assertDatabaseCount('posts', 0);
+        $this->assertDatabaseCount('comments', 0);
     }
 
-    public function test_delete_linked_comments_OK(): void
+    public function test_delete_other_user_KO(): void
     {
-        $this->markTestIncomplete();
+        $this->authUser();
+        $otherUser = User::factory()->create();
+        $post = Post::factory()->for($otherUser)->create();
+        Comment::factory()->count(2)->for($otherUser)->for($post)->create();
+
+        $response = $this->delete("/api/posts/{$post->id}");
+        $response->assertStatus(403);
+
+        $this->assertDatabaseCount('posts', 1);
+        $this->assertDatabaseCount('comments', 2);
     }
 }
