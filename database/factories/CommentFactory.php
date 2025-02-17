@@ -18,7 +18,7 @@ class CommentFactory extends Factory
         $updatedAt->add($randomDays);
 
         return [
-            'content' => fake()->sentence(60),
+            'content' => fake()->sentence(10),
             'created_at' => $createdAt,
             'updated_at' => $updatedAt,
         ];
