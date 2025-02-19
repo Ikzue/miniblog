@@ -66,7 +66,7 @@ class CreatePostTest extends TestCase
         $response = $this->post('/api/posts', [
             'title' => 'My title',
         ]);
-        $response->assertInvalid(['content']);
+        $response->assertInvalid(['content' => 'The content field is required.']);
 
         $this->assertDatabaseCount('posts', 0);
     }

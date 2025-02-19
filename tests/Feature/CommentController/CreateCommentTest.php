@@ -71,7 +71,7 @@ class CreateCommentTest extends TestCase
         $response = $this->post('/api/comments', [
             'content' => 'My content',
         ]);
-        $response->assertInvalid(['post_id']);
+        $response->assertInvalid(['post_id' => 'The post id field is required.']);
 
         $this->assertDatabaseCount('comments', 0);
     }

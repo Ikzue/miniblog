@@ -103,7 +103,7 @@ class UpdatePostTest extends TestCase
         $response = $this->put("/api/posts/{$post->id}", [
             'content' => 'New content'
         ]);
-        $response->assertInvalid(['title']);
+        $response->assertInvalid(['title' => 'The title field is required.']);
 
         $this->assertDatabaseCount('posts', 1);
         $this->assertDatabaseHas('posts', [

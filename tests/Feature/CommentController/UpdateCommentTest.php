@@ -95,7 +95,7 @@ class UpdateCommentTest extends TestCase
         $comment = Comment::factory()->for($user)->for($post)->create(["content" => "Old content"]);
 
         $response = $this->put("/api/comments/{$comment->id}", []);
-        $response->assertInvalid(['content']);
+        $response->assertInvalid(['content' => 'The content field is required.']);
 
         $this->assertDatabaseCount('comments', 1);
         $this->assertDatabaseHas('comments', [
