@@ -36,11 +36,15 @@ class DeleteCommentTest extends TestCase
     {
         $user = $this->authUser();
         $post = Post::factory()->for($user)->create();
+        $anotherPost = Post::factory()->for($user)->create();
         $comment = Comment::factory()->for($user)->for($post)->create();
+        Comment::factory()->count(2)->for($user)->for($post)->create();
+        Comment::factory()->count(2)->for($user)->for($anotherPost)->create();
 
+        $this->assertDatabaseCount('comments', 5);
         $response = $this->delete("/api/comments/{$comment->id}");
         $response->assertStatus(204);
-        $this->assertDatabaseCount('comments', 0);
+        $this->assertDatabaseCount('comments', 4);
     }
 
     public function test_cannot_delete_other_user_comments(): void

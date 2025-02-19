@@ -34,13 +34,18 @@ class DeletePostTest extends TestCase
     {
         $user = $this->authUser();
         $post = Post::factory()->for($user)->create();
+        $anotherPost = Post::factory()->for($user)->create();
         Comment::factory()->count(2)->for($user)->for($post)->create();
+        Comment::factory()->count(3)->for($user)->for($anotherPost)->create();
+
+        $this->assertDatabaseCount('posts', 2);
+        $this->assertDatabaseCount('comments', 5);
 
         $response = $this->delete("/api/posts/{$post->id}");
         $response->assertStatus(204);
 
-        $this->assertDatabaseCount('posts', 0);
-        $this->assertDatabaseCount('comments', 0);
+        $this->assertDatabaseCount('posts', 1);
+        $this->assertDatabaseCount('comments', 3);
     }
 
     public function test_cannot_delete_other_user_post(): void
