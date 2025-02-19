@@ -19,14 +19,14 @@ class DetailsPostTest extends TestCase
         return $user;
     }
 
-    public function test_no_auth(): void
+    public function test_should_redirect_guest(): void
     {
         $post = Post::factory()->for(User::factory()->create())->create();
         $response = $this->get("/api/posts/{$post->id}");
         $response->assertRedirectToRoute('login');
     }
 
-    public function test_auth(): void
+    public function test_should_return_ok_status(): void
     {
         $user = $this->authUser();
         $post = Post::factory()->for($user)->create();
@@ -34,7 +34,7 @@ class DetailsPostTest extends TestCase
         $response->assertStatus(200);
     }
 
-    public function test_format_OK(): void
+    public function test_can_get_post_details_with_correct_formatting(): void
     {
         $user = $this->authUser();
         $post = Post::factory()->for($user)->create();
@@ -50,7 +50,7 @@ class DetailsPostTest extends TestCase
         ]);
     }
 
-    public function test_format_other_user_OK(): void
+    public function test_can_get_other_user_post_details_with_correct_formatting(): void
     {
         $this->authUser();
         $post = Post::factory()->for(User::factory()->create())->create();

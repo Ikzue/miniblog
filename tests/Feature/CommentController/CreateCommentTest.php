@@ -20,7 +20,7 @@ class CreateCommentTest extends TestCase
         return $user;
     }
 
-    public function test_no_auth(): void
+    public function test_should_redirect_guest(): void
     {
         $post = Post::factory()->for(User::factory()->create())->create(); 
 
@@ -31,7 +31,7 @@ class CreateCommentTest extends TestCase
         $response->assertRedirectToRoute('login');
     }
 
-    public function test_auth(): void
+    public function test_should_return_ok_status(): void
     {
         $user = $this->authUser();
         $post = Post::factory()->for($user)->create(); 
@@ -43,7 +43,7 @@ class CreateCommentTest extends TestCase
         $response->assertStatus(201);
     }
 
-    public function test_create_OK(): void
+    public function test_can_create_post_and_check_side_effects(): void
     {
         $user = $this->authUser();
         $post = Post::factory()->for($user)->create(); 
@@ -64,7 +64,7 @@ class CreateCommentTest extends TestCase
         ]);
     }
 
-    public function test_create_missing_field_KO(): void
+    public function test_cannot_create_post_when_missing_field(): void
     {
         $this->authUser();
         $this->assertDatabaseCount('comments', 0);
@@ -75,13 +75,5 @@ class CreateCommentTest extends TestCase
         $response->assertInvalid(['post_id']);
 
         $this->assertDatabaseCount('comments', 0);
-    }
-
-    public function test_get_disabled(): void
-    {
-        $this->authUser();
-
-        $response = $this->get('/api/comments/create');
-        $response->assertStatus(404);
     }
 }

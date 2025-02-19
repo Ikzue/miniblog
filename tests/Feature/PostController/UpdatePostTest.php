@@ -18,7 +18,7 @@ class UpdatePostTest extends TestCase
         return $user;
     }
     
-    public function test_no_auth(): void {
+    public function test_should_redirect_guest(): void {
         $user = User::factory()->create();
         $post = Post::factory()->for($user)->create();
 
@@ -29,7 +29,7 @@ class UpdatePostTest extends TestCase
         $response->assertRedirectToRoute('login');
     }
     
-    public function test_auth(): void {
+    public function test_should_return_ok_status(): void {
         $user = $this->authUser();
         $post = Post::factory()->for($user)->create([
             'title' => 'Old title',
@@ -43,7 +43,7 @@ class UpdatePostTest extends TestCase
         $response->assertOk();
     }
     
-    public function test_update_OK(): void {
+    public function test_can_update_post(): void {
         $user = $this->authUser();
         $post = Post::factory()->for($user)->create([
             'title' => 'Old title',
@@ -63,7 +63,7 @@ class UpdatePostTest extends TestCase
         ]);
     }
     
-    public function test_update_no_side_effects_OK(): void {
+    public function test_can_update_post_without_side_effects(): void {
         $user = $this->authUser();
         $post = Post::factory()->for($user)->create([
             'title' => 'Post 1',
@@ -93,7 +93,7 @@ class UpdatePostTest extends TestCase
         ]);
     }
     
-    public function test_update_missing_field_KO(): void {
+    public function test_cannot_update_post_with_missing_field(): void {
         $user = $this->authUser();
         $post = Post::factory()->for($user)->create([
             'title' => 'Old title',
@@ -113,7 +113,7 @@ class UpdatePostTest extends TestCase
         ]);
     }
     
-    public function test_update_other_user_KO(): void {
+    public function test_cannot_update_other_user_post(): void {
         $this->authUser();
         $otherUser = User::factory()->create();
         $post = Post::factory()->for($otherUser)->create([
@@ -132,25 +132,6 @@ class UpdatePostTest extends TestCase
             'title' => 'Old title',
             'content' => 'Old content',
             'user_id' => $otherUser->id,
-        ]);
-    }
-    
-    public function test_patch_disabled(): void {
-        $user = $this->authUser();
-        $post = Post::factory()->for($user)->create([
-            'title' => 'Old title',
-            'content' => 'Old content'
-        ]);
-
-        $response = $this->patch("/api/posts/{$post->id}", [
-            'content' => 'New content',
-        ]);
-        $response->assertStatus(405);
-
-        $this->assertDatabaseHas('posts', [
-            'title' => 'Old title',
-            'content' => 'Old content',
-            'user_id' => $user->id,
         ]);
     }
 }

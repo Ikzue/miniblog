@@ -20,7 +20,7 @@ class DeleteCommentTest extends TestCase
         return $user;
     }
 
-    public function test_no_auth(): void
+    public function test_should_redirect_guest(): void
     {
         $user = User::factory()->create();
         $post = Post::factory()->for($user)->create();
@@ -32,7 +32,7 @@ class DeleteCommentTest extends TestCase
         $this->assertDatabaseCount('comments', 1);
     }
 
-    public function test_delete_OK(): void
+    public function test_can_delete_comment_without_side_effects(): void
     {
         $user = $this->authUser();
         $post = Post::factory()->for($user)->create();
@@ -43,7 +43,7 @@ class DeleteCommentTest extends TestCase
         $this->assertDatabaseCount('comments', 0);
     }
 
-    public function test_delete_other_user_KO(): void
+    public function test_cannot_delete_other_user_comments(): void
     {
         $this->authUser();
         $otherUser = User::factory()->create();

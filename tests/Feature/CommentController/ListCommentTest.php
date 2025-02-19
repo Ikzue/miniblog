@@ -3,7 +3,6 @@
 namespace Tests\Feature\CommentController;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Database\Eloquent\Factories\Sequence;
 
 use Tests\TestCase;
 
@@ -22,13 +21,13 @@ class ListCommentTest extends TestCase
         return $user;
     }
 
-    public function test_no_auth(): void
+    public function test_should_redirect_guest(): void
     {
         $response = $this->get("/api/comments");
         $response->assertRedirectToRoute('login');
     }
 
-    public function test_auth(): void
+    public function test_should_return_ok_status(): void
     {
         $this->authUser();
 
@@ -36,7 +35,7 @@ class ListCommentTest extends TestCase
         $response->assertStatus(200);
     }
 
-    public function test_format_OK(): void
+    public function test_should_list_post_comments_with_correct_formatting(): void
     {
         $user = $this->authUser();
         $post = Post::factory()->for($user)->create();
@@ -59,8 +58,8 @@ class ListCommentTest extends TestCase
         ]]);
     }
 
-    /** Test comments for a post page */
-    public function test_post_comments_ordering_OK(): void{
+    /** List comments for a single post page */
+    public function test_should_list_post_comments_with_descending_dates_order(): void{
         $user = $this->authUser();
         $post = Post::factory()->for($user)->create();
         $someOtherPost = Post::factory()->for($user)->create();
@@ -102,8 +101,8 @@ class ListCommentTest extends TestCase
         $response->assertSeeInOrder($dates);
     }
 
-    /** Test comments for the user 'my comments' page */
-    public function test_my_comments_ordering_OK(): void{
+    /** List comments for a user 'my comments' page */
+    public function test_should_list_my_comments_with_descending_dates_order(): void{
         $user = $this->authUser();
         $posts = Post::factory()
             ->count(4)
@@ -146,9 +145,5 @@ class ListCommentTest extends TestCase
             ->orderBy('created_at', 'desc')
             ->pluck('created_at')->map->toISOString()->all();
         $response->assertSeeInOrder($dates);
-    }
-
-    public function test_pagination(): void{
-        $this->markTestIncomplete('Feature not implemented');
     }
 }

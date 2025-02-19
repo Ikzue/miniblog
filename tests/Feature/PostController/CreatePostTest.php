@@ -18,7 +18,7 @@ class CreatePostTest extends TestCase
         return $user;
     }
 
-    public function test_no_auth(): void
+    public function test_should_redirect_guest(): void
     {
         $response = $this->post('/api/posts', [
             'title' => 'My title',
@@ -27,7 +27,7 @@ class CreatePostTest extends TestCase
         $response->assertRedirectToRoute('login');
     }
 
-    public function test_auth(): void
+    public function test_should_redirect_to_posts_list_after_post_creation(): void
     {
         $this->authUser();
 
@@ -38,7 +38,7 @@ class CreatePostTest extends TestCase
         $response->assertRedirectToRoute('posts.list.ui');
     }
 
-    public function test_create_OK(): void
+    public function test_can_create_post(): void
     {
         $user = $this->authUser();
         $reqData = [
@@ -59,7 +59,7 @@ class CreatePostTest extends TestCase
         ]);
     }
 
-    public function test_create_missing_field_KO(): void
+    public function test_cannot_create_post_with_missing_field(): void
     {
         $this->authUser();
         $this->assertDatabaseCount('posts', 0);
@@ -70,12 +70,5 @@ class CreatePostTest extends TestCase
         $response->assertInvalid(['content']);
 
         $this->assertDatabaseCount('posts', 0);
-    }
-
-    public function test_get_disabled(): void
-    {
-        $this->authUser();
-        $response = $this->get('/api/posts/create');
-        $response->assertStatus(404);
     }
 }

@@ -19,20 +19,20 @@ class ListPostTest extends TestCase
         return $user;
     }
 
-    public function test_no_auth(): void
+    public function test_should_redirect_guest(): void
     {
         $response = $this->get("/api/posts");
         $response->assertRedirectToRoute('login');
     }
 
-    public function test_auth(): void
+    public function test_should_return_ok_status(): void
     {
         $this->authUser();
         $response = $this->get("/api/posts");
         $response->assertStatus(200);
     }
 
-    public function test_format_OK(): void
+    public function test_can_list_posts_with_correct_formatting(): void
     {
         $user = $this->authUser();
         $post = Post::factory()->for($user)->create();
@@ -52,7 +52,7 @@ class ListPostTest extends TestCase
         ]);
     }
 
-    public function test_ordering_OK(): void{
+    public function test_can_list_posts_with_descending_dates_order(): void{
         $user = $this->authUser();
         $createdAtDates = [
             '2025-02-01 12:00:00',
@@ -71,9 +71,5 @@ class ListPostTest extends TestCase
         $dates = Post::orderBy('created_at', 'desc')
             ->pluck('created_at')->map->toISOString()->all();
         $response->assertSeeInOrder($dates);
-    }
-
-    public function test_pagination(): void{
-        $this->markTestIncomplete('Feature not implemented');
     }
 }
