@@ -47,18 +47,17 @@ class CreateCommentTest extends TestCase
     {
         $user = $this->authUser();
         $post = Post::factory()->for($user)->create(); 
-        $reqData = [
-            'content' => 'My content',
-            'post_id' => $post->id,
-        ];
         $this->assertDatabaseCount('comments', 0);
 
-        $response = $this->post('/api/comments', $reqData);
+        $response = $this->post('/api/comments', [
+            'content' => 'My content',
+            'post_id' => $post->id,
+        ]);
         $response->assertCreated();
 
         $this->assertDatabaseCount('comments', 1);
         $this->assertDatabaseHas('comments', [
-            'content' => $reqData['content'],
+            'content' => 'My content',
             'post_id' => $post->id,
             'user_id' => $user->id,
         ]);

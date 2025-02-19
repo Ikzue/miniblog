@@ -41,20 +41,19 @@ class CreatePostTest extends TestCase
     public function test_can_create_post(): void
     {
         $user = $this->authUser();
-        $reqData = [
-            'title' => 'My title',
-            'content' => 'My content',
-        ];
         $this->assertDatabaseCount('posts', 0);
 
-        $response = $this->post('/api/posts', $reqData);
+        $response = $this->post('/api/posts', [
+            'title' => 'My title',
+            'content' => 'My content',
+        ]);
         $response->assertSessionHas('success', 'Post created successfully');
         $response->assertRedirect('/posts/list');
 
         $this->assertDatabaseCount('posts', 1);
         $this->assertDatabaseHas('posts', [
-            'title' => $reqData['title'],
-            'content' => $reqData['content'],
+            'title' => 'My title',
+            'content' => 'My content',
             'user_id' => $user->id
         ]);
     }

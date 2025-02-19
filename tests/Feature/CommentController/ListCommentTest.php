@@ -3,6 +3,7 @@
 namespace Tests\Feature\CommentController;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Carbon\Carbon;
 
 use Tests\TestCase;
 
@@ -74,17 +75,17 @@ class ListCommentTest extends TestCase
         // Create post's comments
         // User 1: 2 comments
         Comment::factory()->count(2)
-        ->for($user)->for($post)->sequence([
-            'created_at' => $createdAtDates[0], 
-            'created_at' => $createdAtDates[1]
-        ])->create();
+        ->for($user)->for($post)->sequence(
+            ['created_at' => $createdAtDates[0]], 
+            ['created_at' => $createdAtDates[1]]
+        )->create();
         // User 2: 3 comments
         Comment::factory()->count(3)
-        ->for(User::factory()->create())->for($post)->sequence([
-            'created_at' => $createdAtDates[2], 
-            'created_at' => $createdAtDates[3], 
-            'created_at' => $createdAtDates[4]
-        ])->create();
+        ->for(User::factory()->create())->for($post)->sequence(
+            ['created_at' => $createdAtDates[2]], 
+            ['created_at' => $createdAtDates[3]], 
+            ['created_at' => $createdAtDates[4]], 
+        )->create();
 
         // Other posts that shouldn't be shown
         Comment::factory()->count(1)
@@ -92,13 +93,16 @@ class ListCommentTest extends TestCase
         Comment::factory()->count(2)
             ->for(User::factory()->create())->for($someOtherPost)->create();
 
-        // Check number of posts
+        // Check number of posts and order
         $response = $this->get("/api/comments?post_id={$post->id}");
         $response->assertJsonCount(5);
-
-        // Check order
-        $dates = Comment::where('post_id', $post->id)->orderBy('created_at', 'desc')->pluck('created_at')->map->toISOString()->all();
-        $response->assertSeeInOrder($dates);
+        $response->assertSeeInOrder([
+            Carbon::parse('2025-02-03 14:00:00', 'UTC')->toISOString(),
+            Carbon::parse('2025-02-01 13:00:00', 'UTC')->toISOString(),
+            Carbon::parse('2025-02-01 12:00:00', 'UTC')->toISOString(),
+            Carbon::parse('2025-02-01 10:00:00', 'UTC')->toISOString(),
+            Carbon::parse('2025-01-05 09:00:00', 'UTC')->toISOString(),
+        ]);
     }
 
     /** List comments for a user 'my comments' page */
@@ -141,9 +145,11 @@ class ListCommentTest extends TestCase
         $response->assertJsonCount(4);
 
         // Check order
-        $dates = Comment::where('user_id', $user->id)
-            ->orderBy('created_at', 'desc')
-            ->pluck('created_at')->map->toISOString()->all();
-        $response->assertSeeInOrder($dates);
+        $response->assertSeeInOrder([
+            Carbon::parse('2025-02-01 13:00:00', 'UTC')->toISOString(),
+            Carbon::parse('2025-02-01 12:00:00', 'UTC')->toISOString(),
+            Carbon::parse('2025-02-01 10:00:00', 'UTC')->toISOString(),
+            Carbon::parse('2025-02-01 09:00:00', 'UTC')->toISOString(),
+        ]);
     }
 }

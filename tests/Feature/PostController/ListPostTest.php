@@ -1,6 +1,7 @@
 <?php
 
 namespace Tests\Feature\PostController;
+use Carbon\Carbon;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -68,8 +69,11 @@ class ListPostTest extends TestCase
         $response = $this->get("/api/posts");
         $response->assertJsonCount(4);
 
-        $dates = Post::orderBy('created_at', 'desc')
-            ->pluck('created_at')->map->toISOString()->all();
-        $response->assertSeeInOrder($dates);
+        $response->assertSeeInOrder([
+            Carbon::parse('2025-02-01 13:00:00', 'UTC')->toISOString(),
+            Carbon::parse('2025-02-01 12:00:00', 'UTC')->toISOString(),
+            Carbon::parse('2025-02-01 10:00:00', 'UTC')->toISOString(),
+            Carbon::parse('2025-02-01 09:00:00', 'UTC')->toISOString(),
+        ]);
     }
 }
