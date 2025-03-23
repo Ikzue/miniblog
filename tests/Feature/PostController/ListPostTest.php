@@ -41,10 +41,11 @@ class ListPostTest extends TestCase
         $response = $this->get("/api/posts");
         $response->assertExactJson([
             ['id' => $post->id,
-            'created_at' => $post->created_at->toISOString(),
-            'updated_at' => $post->updated_at->toISOString(),
+            'created_at' => $post->created_at->toDateTimeString(),
+            'updated_at' => $post->updated_at->toDateTimeString(),
             'title' => $post->title,
             'content' => $post->content,
+            'is_own_post' => true,
             'user' => [
                 'id' => $post->user->id,
                 'name' => $post->user->name
@@ -70,10 +71,10 @@ class ListPostTest extends TestCase
         $response->assertJsonCount(4);
 
         $response->assertSeeInOrder([
-            Carbon::parse('2025-02-01 13:00:00', 'UTC')->toISOString(),
-            Carbon::parse('2025-02-01 12:00:00', 'UTC')->toISOString(),
-            Carbon::parse('2025-02-01 10:00:00', 'UTC')->toISOString(),
-            Carbon::parse('2025-02-01 09:00:00', 'UTC')->toISOString(),
+            Carbon::parse('2025-02-01 13:00:00', 'UTC')->toDateTimeString(),
+            Carbon::parse('2025-02-01 12:00:00', 'UTC')->toDateTimeString(),
+            Carbon::parse('2025-02-01 10:00:00', 'UTC')->toDateTimeString(),
+            Carbon::parse('2025-02-01 09:00:00', 'UTC')->toDateTimeString(),
         ]);
     }
 }

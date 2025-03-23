@@ -2,6 +2,12 @@
 
 namespace Database\Seeders;
 
+use App\Models\User;
+use App\Models\Post;
+use App\Models\Comment;
+use App\Enums\Role;
+use Illuminate\Support\Facades\Hash;
+use Faker\Factory as Faker;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -12,11 +18,47 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // \App\Models\User::factory(10)->create();
+        $faker = Faker::create();
 
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+        $roles = [
+            Role::MODERATOR->value,
+            Role::WRITER->value,
+            Role::READER->value,
+        ];
+
+        $users = [];
+
+        // Create users
+        foreach ($roles as $role) {
+            $users[] = User::create([
+                'name' => ucfirst($role),
+                'email' => $role . '@example.com',
+                'password' => Hash::make('password'),
+                'role' => $role,
+                'is_email_public' => $faker->boolean,
+            ]);
+        }
+
+        $posts = [];
+
+        // Create a post for each user
+        foreach ($users as $user) {
+            $posts[] = Post::create([
+                'title' => ucfirst($user->role) . ' post',
+                'content' => $faker->paragraph,
+                'user_id' => $user->id,
+            ]);
+        }
+
+        // Create a comment by each user for each post
+        foreach ($posts as $post) {
+            foreach ($users as $user) {
+                Comment::create([
+                    'content' => $faker->sentence,
+                    'post_id' => $post->id,
+                    'user_id' => $user->id,
+                ]);
+            }
+        }
     }
 }

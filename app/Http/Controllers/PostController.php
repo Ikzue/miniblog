@@ -4,14 +4,15 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Post;
-
+use App\Http\Resources\PostResource;
 
 class PostController extends Controller
 {
     // GET posts
     public function index()
     {
-        return Post::with('user:id,name')->orderByDesc('created_at')->get();
+        $postsList = Post::with('user:id,name')->orderByDesc('created_at')->get();
+        return PostResource::collection($postsList);
     }
 
     // POST posts - Create
@@ -30,8 +31,7 @@ class PostController extends Controller
     // GET posts/{id} - Show
     public function show(Request $request, Post $post)
     {
-        $post->is_own_post = $post->user_id == $request->user()->id;
-        return $post;
+        return new PostResource($post);
     }
 
     // PUT/PATCH posts/{id}
@@ -52,7 +52,7 @@ class PostController extends Controller
         ]);
 
         $post->fill($input)->save();
-        return $post;
+        return new PostResource($post);
     }
 
     // DELETE posts/{id}

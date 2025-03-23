@@ -45,8 +45,9 @@ class ListCommentTest extends TestCase
         $response = $this->get("/api/comments");
         $response->assertExactJson([[
             'id' => $comment->id,
-            'created_at' => $comment->created_at->toISOString(),
-            'updated_at' => $comment->updated_at->toISOString(),
+            'created_at' => $comment->created_at->toDateTimeString(),
+            'updated_at' => $comment->updated_at->toDateTimeString(),
+            'is_own_comment' => true,
             'content' => $comment->content,
             'user' => [
                 'id' => $comment->user->id,
@@ -97,11 +98,11 @@ class ListCommentTest extends TestCase
         $response = $this->get("/api/comments?post_id={$post->id}");
         $response->assertJsonCount(5);
         $response->assertSeeInOrder([
-            Carbon::parse('2025-02-03 14:00:00', 'UTC')->toISOString(),
-            Carbon::parse('2025-02-01 13:00:00', 'UTC')->toISOString(),
-            Carbon::parse('2025-02-01 12:00:00', 'UTC')->toISOString(),
-            Carbon::parse('2025-02-01 10:00:00', 'UTC')->toISOString(),
-            Carbon::parse('2025-01-05 09:00:00', 'UTC')->toISOString(),
+            Carbon::parse('2025-02-03 14:00:00', 'UTC')->toDateTimeString(),
+            Carbon::parse('2025-02-01 13:00:00', 'UTC')->toDateTimeString(),
+            Carbon::parse('2025-02-01 12:00:00', 'UTC')->toDateTimeString(),
+            Carbon::parse('2025-02-01 10:00:00', 'UTC')->toDateTimeString(),
+            Carbon::parse('2025-01-05 09:00:00', 'UTC')->toDateTimeString(),
         ]);
     }
 
@@ -146,10 +147,10 @@ class ListCommentTest extends TestCase
 
         // Check order
         $response->assertSeeInOrder([
-            Carbon::parse('2025-02-01 13:00:00', 'UTC')->toISOString(),
-            Carbon::parse('2025-02-01 12:00:00', 'UTC')->toISOString(),
-            Carbon::parse('2025-02-01 10:00:00', 'UTC')->toISOString(),
-            Carbon::parse('2025-02-01 09:00:00', 'UTC')->toISOString(),
+            Carbon::parse('2025-02-01 13:00:00', 'UTC')->toDateTimeString(),
+            Carbon::parse('2025-02-01 12:00:00', 'UTC')->toDateTimeString(),
+            Carbon::parse('2025-02-01 10:00:00', 'UTC')->toDateTimeString(),
+            Carbon::parse('2025-02-01 09:00:00', 'UTC')->toDateTimeString(),
         ]);
     }
 }

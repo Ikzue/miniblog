@@ -42,8 +42,8 @@ class DetailsPostTest extends TestCase
         $response = $this->get("/api/posts/{$post->id}");
         $response->assertExactJson([
             'id' => $post->id,
-            'created_at' => $post->created_at->toISOString(),
-            'updated_at' => $post->updated_at->toISOString(),
+            'created_at' => $post->created_at->toDateTimeString(),
+            'updated_at' => $post->updated_at->toDateTimeString(),
             'title' => $post->title,
             'content' => $post->content,
             'is_own_post' => true
@@ -58,8 +58,8 @@ class DetailsPostTest extends TestCase
         $response = $this->get("/api/posts/{$post->id}");
         $response->assertExactJson([
             'id' => $post->id,
-            'created_at' => $post->created_at->toISOString(),
-            'updated_at' => $post->updated_at->toISOString(),
+            'created_at' => $post->created_at->toDateTimeString(),
+            'updated_at' => $post->updated_at->toDateTimeString(),
             'title' => $post->title,
             'content' => $post->content,
             'is_own_post' => false
