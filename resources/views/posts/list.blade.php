@@ -8,7 +8,11 @@
 
 <div class="flex items-center justify-between mt-2">
     <h2 class="text-xl">Posts</h2>
-    <a class="btn text-black" href="{{ route('posts.create.ui') }}">Create post</a>
+    @can('create', App\Models\Post::class)
+        <a class="btn text-black" href="{{ route('posts.create.ui') }}">Create post</a>
+    @else
+        <p class="text-red-500">Can't post</p>
+    @endcan
 </div>
 <div>
 <table class="min-w-full divide-y-2">

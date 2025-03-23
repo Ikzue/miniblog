@@ -8,14 +8,15 @@ use Tests\TestCase;
 use App\Models\Post;
 use App\Models\Comment;
 use App\Models\User;
+use App\Enums\Role;
 
 class DeletePostTest extends TestCase
 {
     use RefreshDatabase;
 
-    private function authUser()
+    private function authUser(Role $role = Role::READER)
     {
-        $user = User::factory()->create();
+        $user = User::factory()->role($role)->create();
         $this->actingAs($user);
         return $user;
     }
@@ -32,7 +33,7 @@ class DeletePostTest extends TestCase
 
     public function test_can_delete_post_without_side_effects(): void
     {
-        $user = $this->authUser();
+        $user = $this->authUser(Role::MODERATOR);
         $post = Post::factory()->for($user)->create();
         $anotherPost = Post::factory()->for($user)->create();
         Comment::factory()->count(2)->for($user)->for($post)->create();

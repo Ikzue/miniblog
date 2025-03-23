@@ -18,6 +18,7 @@ class PostController extends Controller
     // POST posts - Create
     public function store(Request $request)
     {
+        $this->authorize('create', Post::class);
         $input = $request->validate([
             'title' => 'required',
             'content' => 'required',
@@ -37,6 +38,7 @@ class PostController extends Controller
     // PUT/PATCH posts/{id}
     public function update(Request $request, Post $post)
     {
+        $this->authorize('update', $post);
         if ($request->method() != 'PUT')
         {
             return response()->json(['error' => "Incorrect method"], 405);
@@ -58,6 +60,7 @@ class PostController extends Controller
     // DELETE posts/{id}
     public function destroy(Request $request, Post $post)
     {
+        $this->authorize('delete', $post);
         if ($request->user()->id != $post->user_id)
         {
             return response()->json(['error' => "Access denied"], 403);

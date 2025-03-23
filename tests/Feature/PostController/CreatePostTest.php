@@ -6,14 +6,15 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 use App\Models\User;
+use App\Enums\Role;
 
 class CreatePostTest extends TestCase
 {
     use RefreshDatabase;
 
-    private function authUser()
+    private function authUser(Role $role = Role::READER)
     {
-        $user = User::factory()->create();
+        $user = User::factory()->role($role)->create();
         $this->actingAs($user);
         return $user;
     }
@@ -29,7 +30,7 @@ class CreatePostTest extends TestCase
 
     public function test_should_redirect_to_posts_list_after_post_creation(): void
     {
-        $this->authUser();
+        $this->authUser(Role::WRITER);
 
         $response = $this->post('/api/posts', [
             'title' => 'My title',
@@ -40,7 +41,7 @@ class CreatePostTest extends TestCase
 
     public function test_can_create_post(): void
     {
-        $user = $this->authUser();
+        $user = $this->authUser(Role::WRITER);
         $this->assertDatabaseCount('posts', 0);
 
         $response = $this->post('/api/posts', [
@@ -60,7 +61,7 @@ class CreatePostTest extends TestCase
 
     public function test_cannot_create_post_with_missing_field(): void
     {
-        $this->authUser();
+        $this->authUser(Role::WRITER);
         $this->assertDatabaseCount('posts', 0);
 
         $response = $this->post('/api/posts', [

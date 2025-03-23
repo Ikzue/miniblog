@@ -46,7 +46,9 @@ class DetailsPostTest extends TestCase
             'updated_at' => $post->updated_at->toDateTimeString(),
             'title' => $post->title,
             'content' => $post->content,
-            'is_own_post' => true
+            'can_comment' => false,
+            'can_delete' => false,
+            'can_update' => true,
         ]);
     }
 
@@ -62,7 +64,9 @@ class DetailsPostTest extends TestCase
             'updated_at' => $post->updated_at->toDateTimeString(),
             'title' => $post->title,
             'content' => $post->content,
-            'is_own_post' => false
+            'can_comment' => false,
+            'can_delete' => false,
+            'can_update' => false,
         ]);
     }
 }

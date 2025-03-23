@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Comment;
+use App\Models\Post;
 use App\Http\Resources\CommentResource;
 
 class CommentController extends Controller
@@ -35,6 +36,8 @@ class CommentController extends Controller
             'post_id' => 'required',
             'user_id' => 'missing',
         ]);
+        $this->authorize('canComment', Post::findOrFail($input['post_id']));
+
         $request->user()->comments()->create($input);
         return response()->json(['message' => 'Comment created'], 201);
     }
@@ -48,6 +51,7 @@ class CommentController extends Controller
     // PUT/PATCH comments/{id}
     public function update(Request $request, Comment $comment)
     {
+        $this->authorize('update', $comment);
         if ($request->method() != 'PUT')
         {
             return response()->json(['error' => 'Incorrect method'], 405);
@@ -69,6 +73,7 @@ class CommentController extends Controller
     // DELETE comments/{id}
     public function destroy(Request $request, Comment $comment)
     {
+        $this->authorize('delete', $comment);
         if ($request->user()->id != $comment->user_id)
         {
             return response()->json(['error' => "Access denied"], 403);

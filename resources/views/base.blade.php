@@ -15,7 +15,6 @@
     <hr>
     <nav class="my-1">
         {{ Auth::user()->name }} ({{ Auth::user()->role }}) - 
-        <a href="/">Home</a> - 
         <a href="{{ route('posts.list.ui') }}">Posts</a> -
         <a href="{{ route('comments.list.ui') }}">My comments</a>
     </nav>

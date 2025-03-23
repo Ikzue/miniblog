@@ -47,8 +47,9 @@ class ListCommentTest extends TestCase
             'id' => $comment->id,
             'created_at' => $comment->created_at->toDateTimeString(),
             'updated_at' => $comment->updated_at->toDateTimeString(),
-            'is_own_comment' => true,
             'content' => $comment->content,
+            'can_delete' => true,
+            'can_update' => true,
             'user' => [
                 'id' => $comment->user->id,
                 'name' => $comment->user->name

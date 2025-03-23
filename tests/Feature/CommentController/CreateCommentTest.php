@@ -8,14 +8,15 @@ use Tests\TestCase;
 use App\Models\Comment;
 use App\Models\User;
 use App\Models\Post;
+use App\Enums\Role;
 
 class CreateCommentTest extends TestCase
 {
     use RefreshDatabase;
 
-    private function authUser()
+    private function authUser(Role $role = Role::READER)
     {
-        $user = User::factory()->create();
+        $user = User::factory()->role($role)->create();
         $this->actingAs($user);
         return $user;
     }
@@ -45,7 +46,7 @@ class CreateCommentTest extends TestCase
 
     public function test_can_create_post_and_check_side_effects(): void
     {
-        $user = $this->authUser();
+        $user = $this->authUser(Role::WRITER);
         $post = Post::factory()->for($user)->create(); 
         $this->assertDatabaseCount('comments', 0);
 
