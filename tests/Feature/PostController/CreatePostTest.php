@@ -39,7 +39,27 @@ class CreatePostTest extends TestCase
         $response->assertRedirectToRoute('posts.list.ui');
     }
 
-    public function test_can_create_post(): void
+    public function test_can_create_post_as_moderator(): void
+    {
+        $user = $this->authUser(Role::MODERATOR);
+        $this->assertDatabaseCount('posts', 0);
+
+        $response = $this->post('/api/posts', [
+            'title' => 'My title',
+            'content' => 'My content',
+        ]);
+        $response->assertSessionHas('success', 'Post created successfully');
+        $response->assertRedirect('/posts/list');
+
+        $this->assertDatabaseCount('posts', 1);
+        $this->assertDatabaseHas('posts', [
+            'title' => 'My title',
+            'content' => 'My content',
+            'user_id' => $user->id
+        ]);
+    }
+
+    public function test_can_create_post_as_writer(): void
     {
         $user = $this->authUser(Role::WRITER);
         $this->assertDatabaseCount('posts', 0);
@@ -57,6 +77,19 @@ class CreatePostTest extends TestCase
             'content' => 'My content',
             'user_id' => $user->id
         ]);
+    }
+
+    public function test_cannot_create_post_as_reader(): void
+    {
+        $user = $this->authUser(Role::READER);
+        $this->assertDatabaseCount('posts', 0);
+
+        $response = $this->post('/api/posts', [
+            'title' => 'My title',
+            'content' => 'My content',
+        ]);
+        $response->assertForbidden();
+        $this->assertDatabaseCount('posts', 0);
     }
 
     public function test_cannot_create_post_with_missing_field(): void

@@ -56,10 +56,6 @@ class CommentController extends Controller
         {
             return response()->json(['error' => 'Incorrect method'], 405);
         }
-        else if ($request->user()->id != $comment->user_id)
-        {
-            return response()->json(['error' => "Access denied"], 403);
-        }
         $input = $request->validate([
             'content' => 'required',
             'post_id' => 'missing',
@@ -74,10 +70,6 @@ class CommentController extends Controller
     public function destroy(Request $request, Comment $comment)
     {
         $this->authorize('delete', $comment);
-        if ($request->user()->id != $comment->user_id)
-        {
-            return response()->json(['error' => "Access denied"], 403);
-        }
         $comment->delete();
         return response()->json(['message' => 'Comment deleted'], 204);
     }

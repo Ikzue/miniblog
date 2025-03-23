@@ -43,10 +43,7 @@ class PostController extends Controller
         {
             return response()->json(['error' => "Incorrect method"], 405);
         }
-        else if ($request->user()->id != $post->user_id)
-        {
-            return response()->json(['error' => "Access denied"], 403);
-        }
+
         $input = $request->validate([
             'title' => 'required',
             'content' => 'required',
@@ -61,10 +58,6 @@ class PostController extends Controller
     public function destroy(Request $request, Post $post)
     {
         $this->authorize('delete', $post);
-        if ($request->user()->id != $post->user_id)
-        {
-            return response()->json(['error' => "Access denied"], 403);
-        }
         $post->comments()->delete();
         $post->delete();
         return response()->json(['message' => 'Post deleted'], 204);
