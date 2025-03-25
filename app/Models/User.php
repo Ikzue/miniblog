@@ -14,10 +14,11 @@ class User extends Authenticatable
     use HasApiTokens, HasFactory, Notifiable;
 
     /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
+     * Added attrs
+     * str role enum('moderator', 'writer', 'reader')
+     * str is_email_public
      */
+
     protected $fillable = [
         'name',
         'email',
@@ -41,6 +42,7 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'is_email_public' => 'boolean',
         'password' => 'hashed',
     ];
 

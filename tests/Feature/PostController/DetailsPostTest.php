@@ -50,6 +50,10 @@ class DetailsPostTest extends TestCase
             'can_comment' => false,
             'can_delete' => false,
             'can_update' => true,
+            'user' => [
+                'id' => $post->user->id,
+                'name' => $post->user->name,
+            ],
         ]);
     }
 
@@ -68,6 +72,55 @@ class DetailsPostTest extends TestCase
             'can_comment' => false,
             'can_delete' => false,
             'can_update' => false,
+            'user' => [
+                'id' => $post->user->id,
+                'name' => $post->user->name,
+            ],
+        ]);
+    }
+
+    public function test_email_shown_when_public(): void {
+        $this->authUser();
+        $userPublicMail = User::factory()->isEmailPublic(true)->create();
+        $post = Post::factory()->for($userPublicMail)->create();
+
+        $response = $this->get("/api/posts/{$post->id}");
+        $response->assertExactJson([
+            'id' => $post->id,
+            'created_at' => $post->created_at->toDateTimeString(),
+            'updated_at' => $post->updated_at->toDateTimeString(),
+            'title' => $post->title,
+            'content' => $post->content,
+            'can_comment' => false,
+            'can_delete' => false,
+            'can_update' => false,
+            'user' => [
+                'id' => $post->user->id,
+                'name' => $post->user->name,
+                'email' => $post->user->email,
+            ],
+        ]);
+    }
+
+    public function test_email_hidden_when_private(): void {
+        $this->authUser();
+        $userPrivateMail = User::factory()->isEmailPublic(false)->create();
+        $post = Post::factory()->for($userPrivateMail)->create();
+
+        $response = $this->get("/api/posts/{$post->id}");
+        $response->assertExactJson([
+            'id' => $post->id,
+            'created_at' => $post->created_at->toDateTimeString(),
+            'updated_at' => $post->updated_at->toDateTimeString(),
+            'title' => $post->title,
+            'content' => $post->content,
+            'can_comment' => false,
+            'can_delete' => false,
+            'can_update' => false,
+            'user' => [
+                'id' => $post->user->id,
+                'name' => $post->user->name,
+            ],
         ]);
     }
 }

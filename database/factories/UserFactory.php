@@ -30,6 +30,7 @@ class UserFactory extends Factory
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'role' => fake()->randomElement(Role::cases())->value,
+            'is_email_public' => false,
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
         ];
@@ -45,13 +46,18 @@ class UserFactory extends Factory
         ]);
     }
 
-    /**
-     * Role state
-     */
+    // States
     public function role(Role $role): Factory
     {
         return $this->state(fn () => [
             'role' => $role->value,
+        ]);
+    }
+
+    public function isEmailPublic(bool $isEmailPublic): Factory
+    {
+        return $this->state(fn () => [
+            'is_email_public' => $isEmailPublic,
         ]);
     }
 }

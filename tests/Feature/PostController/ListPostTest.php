@@ -34,7 +34,7 @@ class ListPostTest extends TestCase
         $response->assertStatus(200);
     }
 
-    public function test_can_list_posts_with_correct_formatting(): void
+    public function test_posts_list_with_correct_formatting(): void
     {
         $user = $this->authUser();
         $post = Post::factory()->for($user)->create();
@@ -57,7 +57,7 @@ class ListPostTest extends TestCase
         ]);
     }
 
-    public function test_can_list_posts_with_descending_dates_order(): void{
+    public function test_posts_list_with_descending_dates_order(): void{
         $user = $this->authUser();
         $createdAtDates = [
             '2025-02-01 12:00:00',
@@ -78,6 +78,46 @@ class ListPostTest extends TestCase
             Carbon::parse('2025-02-01 12:00:00', 'UTC')->toDateTimeString(),
             Carbon::parse('2025-02-01 10:00:00', 'UTC')->toDateTimeString(),
             Carbon::parse('2025-02-01 09:00:00', 'UTC')->toDateTimeString(),
+        ]);
+    }
+
+    public function test_email_only_shown_when_public(): void
+    {
+        $userPrivateMail = $this->authUser();
+        $userPublicMail = User::factory()->isEmailPublic(true)->create();
+
+        $postPrivate = Post::factory()->for($userPrivateMail)->state(['created_at' => '2025-02-01 12:00:00'])->create();
+        $postPublic  =  Post::factory()->for($userPublicMail)->state(['created_at' => '2025-02-01 11:00:00'])->create();
+
+        $response = $this->get("/api/posts");
+        $response->assertExactJson([
+            ['id' => $postPrivate->id,
+            'created_at' => $postPrivate->created_at->toDateTimeString(),
+            'updated_at' => $postPrivate->updated_at->toDateTimeString(),
+            'title' => $postPrivate->title,
+            'content' => $postPrivate->content,
+            'can_comment' => false,
+            'can_delete' => false,
+            'can_update' => true,
+            'user' => [
+                'id' => $postPrivate->user->id,
+                'name' => $postPrivate->user->name,
+                ]
+            ],
+            ['id' => $postPublic->id,
+            'created_at' => $postPublic->created_at->toDateTimeString(),
+            'updated_at' => $postPublic->updated_at->toDateTimeString(),
+            'title' => $postPublic->title,
+            'content' => $postPublic->content,
+            'can_comment' => false,
+            'can_delete' => false,
+            'can_update' => false,
+            'user' => [
+                'id' => $postPublic->user->id,
+                'name' => $postPublic->user->name,
+                'email' => $postPublic->user->email,
+                ]
+            ],
         ]);
     }
 }

@@ -8,10 +8,10 @@ use App\Http\Resources\PostResource;
 
 class PostController extends Controller
 {
-    // GET posts
+    // GET posts list
     public function index()
     {
-        $postsList = Post::with('user:id,name')->orderByDesc('created_at')->get();
+        $postsList = Post::with('user:id,name,is_email_public,email')->orderByDesc('created_at')->get();
         return PostResource::collection($postsList);
     }
 
