@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::table('users', function (Blueprint $table){
             $table->enum(
                 'role',
-                [Role::MODERATOR->value, Role::WRITER->value, Role::READER->value]
-            )->default(Role::READER->value);
+                ['moderator', 'writer', 'reader']
+            )->default('reader');
             $table->boolean('is_email_public')->default(false);
         });
     }
@@ -25,6 +25,7 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table){
             $table->dropColumn('role');
+            $table->dropColumn('is_email_public');
         });
     }
 };
