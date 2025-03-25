@@ -10,14 +10,15 @@ use Tests\TestCase;
 use App\Models\Comment;
 use App\Models\Post;
 use App\Models\User;
+use App\Enums\Role;
 
 class ListCommentTest extends TestCase
 {
     use RefreshDatabase;
 
-    private function authUser()
+    private function authUser(Role $role = Role::READER)
     {
-        $user = User::factory()->create();
+        $user = User::factory()->role($role)->create();
         $this->actingAs($user);
         return $user;
     }

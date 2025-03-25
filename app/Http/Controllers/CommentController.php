@@ -36,7 +36,7 @@ class CommentController extends Controller
             'post_id' => 'required',
             'user_id' => 'missing',
         ]);
-        $this->authorize('canComment', Post::findOrFail($input['post_id']));
+        $this->authorize('create', [Comment::class, Post::findOrFail($input['post_id'])]);
 
         $request->user()->comments()->create($input);
         return response()->json(['message' => 'Comment created'], 201);

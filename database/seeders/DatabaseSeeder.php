@@ -20,21 +20,17 @@ class DatabaseSeeder extends Seeder
     {
         $faker = Faker::create();
 
-        $roles = [
-            Role::MODERATOR->value,
-            Role::WRITER->value,
-            Role::READER->value,
-        ];
+        $roles = Role::cases();
 
         $users = [];
 
         // Create users
         foreach ($roles as $role) {
             $users[] = User::create([
-                'name' => ucfirst($role),
-                'email' => $role . '@example.com',
+                'name' => ucfirst($role->value),
+                'email' => $role->value . '@example.com',
                 'password' => Hash::make('password'),
-                'role' => $role,
+                'role' => $role->value,
                 'is_email_public' => $faker->boolean,
             ]);
         }

@@ -17,7 +17,7 @@ class PostResource extends JsonResource
             'updated_at' => $this->updated_at->toDateTimeString(),
             'can_update' => $request->user()->can('update', $this->resource),
             'can_delete' => $request->user()->can('delete', $this->resource),
-            'can_comment' => $request->user()->can('canComment', $this->resource),
+            'can_comment' => $request->user()->can('comment', $this->resource),
             'user' => $this->whenLoaded('user'),
         ];
     }
