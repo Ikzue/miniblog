@@ -8,7 +8,7 @@ use Tests\TestCase;
 
 use App\Models\Post;
 use App\Models\User;
-use App\Enums\Role;
+use App\Models\Enums\Role;
 
 class ListPostTest extends TestCase
 {

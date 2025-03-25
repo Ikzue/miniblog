@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use App\Models\User;
 use App\Models\Post;
 use App\Models\Comment;
-use App\Enums\Role;
+use App\Models\Enums\Role;
 use Illuminate\Support\Facades\Hash;
 use Faker\Factory as Faker;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;

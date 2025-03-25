@@ -8,7 +8,7 @@ use Tests\TestCase;
 use App\Models\Comment;
 use App\Models\User;
 use App\Models\Post;
-use App\Enums\Role;
+use App\Models\Enums\Role;
 
 class CreateCommentTest extends TestCase
 {

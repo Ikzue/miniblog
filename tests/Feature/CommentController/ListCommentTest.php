@@ -10,7 +10,7 @@ use Tests\TestCase;
 use App\Models\Comment;
 use App\Models\Post;
 use App\Models\User;
-use App\Enums\Role;
+use App\Models\Enums\Role;
 
 class ListCommentTest extends TestCase
 {

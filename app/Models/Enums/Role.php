@@ -1,5 +1,5 @@
 <?php
-namespace App\Enums;
+namespace App\Models\Enums;
 
 enum Role: string
 {
