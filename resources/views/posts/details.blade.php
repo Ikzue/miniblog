@@ -159,7 +159,7 @@
                 const commentHeader = document.createElement('p');
                 const commentContent = document.createElement('p');
                 commentHeader.classList.add('italic')
-                commentHeader.innerText = `${comment.user.name} - ${comment.created_at}`;
+                commentHeader.innerText = `${comment.user.display} - ${comment.created_at}`;
 
                 if (comment.can_update) {
                     addActionToComment('edit', commentHeader, comment.id);

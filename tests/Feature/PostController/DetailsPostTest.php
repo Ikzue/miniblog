@@ -52,7 +52,7 @@ class DetailsPostTest extends TestCase
             'can_update' => true,
             'user' => [
                 'id' => $post->user->id,
-                'name' => $post->user->name,
+                'display' => $post->user->name,
             ],
         ]);
     }
@@ -74,7 +74,7 @@ class DetailsPostTest extends TestCase
             'can_update' => false,
             'user' => [
                 'id' => $post->user->id,
-                'name' => $post->user->name,
+                'display' => $post->user->name,
             ],
         ]);
     }
@@ -96,8 +96,7 @@ class DetailsPostTest extends TestCase
             'can_update' => false,
             'user' => [
                 'id' => $post->user->id,
-                'name' => $post->user->name,
-                'email' => $post->user->email,
+                'display' => "{$post->user->name} <{$post->user->email}>",
             ],
         ]);
     }
@@ -119,7 +118,7 @@ class DetailsPostTest extends TestCase
             'can_update' => false,
             'user' => [
                 'id' => $post->user->id,
-                'name' => $post->user->name,
+                'display' => $post->user->name,
             ],
         ]);
     }

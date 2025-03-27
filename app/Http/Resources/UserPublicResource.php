@@ -12,8 +12,9 @@ class UserPublicResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'name' => $this->name,
-            'email' => $this->when($this->is_email_public, $this->email),
+            'display' => $this->is_email_public
+                ? "{$this->name} <$this->email>"
+                : $this->name,
         ];
     }
 }

@@ -19,7 +19,7 @@ class CommentController extends Controller
             return response()->json(['error' => "Choose to show either a post's comments or a user's comments"], 400);
         }
 
-        $commentsList = Comment::with(['user:id,name', 'post:id,title'])
+        $commentsList = Comment::with(['user:id,name,is_email_public,email', 'post:id,title'])
             ->when($post_id, fn ($query) => $query->where('post_id', $post_id))
             ->when($user_id, fn($query) => $query->where('user_id', $user_id))
             ->orderByDesc('created_at')

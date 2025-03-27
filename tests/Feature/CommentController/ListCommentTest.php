@@ -53,7 +53,7 @@ class ListCommentTest extends TestCase
             'can_update' => true,
             'user' => [
                 'id' => $comment->user->id,
-                'name' => $comment->user->name
+                'display' => $comment->user->name
             ],
             'post' => [
                 'id' => $comment->post->id,

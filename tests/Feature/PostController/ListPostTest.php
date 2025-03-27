@@ -51,7 +51,7 @@ class ListPostTest extends TestCase
             'can_update' => true,
             'user' => [
                 'id' => $post->user->id,
-                'name' => $post->user->name
+                'display' => $post->user->name
                 ]
             ]
         ]);
@@ -101,7 +101,7 @@ class ListPostTest extends TestCase
             'can_update' => true,
             'user' => [
                 'id' => $postPrivate->user->id,
-                'name' => $postPrivate->user->name,
+                'display' => $postPrivate->user->name,
                 ]
             ],
             ['id' => $postPublic->id,
@@ -114,8 +114,7 @@ class ListPostTest extends TestCase
             'can_update' => false,
             'user' => [
                 'id' => $postPublic->user->id,
-                'name' => $postPublic->user->name,
-                'email' => $postPublic->user->email,
+                'display' => "{$postPublic->user->name} <{$postPublic->user->email}>",
                 ]
             ],
         ]);
