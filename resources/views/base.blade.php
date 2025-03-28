@@ -15,8 +15,11 @@
     <hr>
     <nav class="my-1">
         {{ Auth::user()->name }} ({{ Auth::user()->role }}) - 
-        <a href="{{ route('posts.list.ui') }}">Posts</a> -
-        <a href="{{ route('comments.list.ui') }}">My comments</a>
+        <a href="{{ route('posts.list.ui') }}">Posts</a>
+        - <a href="{{ route('comments.list.ui') }}">My comments</a>
+        @if ( Auth::user()->role === App\Models\Enums\Role::MODERATOR->value )
+        - <a href="{{ route('users.list.ui') }}">Users</a>
+        @endif
     </nav>
     <hr>
     @section('content')

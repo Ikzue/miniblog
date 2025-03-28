@@ -4,7 +4,8 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 use App\Models\Post;
-use App\Models\Comment;
+use App\Models\User;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -49,6 +50,15 @@ Route::middleware('auth')->group(function () {
             '/list',
             fn () => view('comments.list')
         )->name('comments.list.ui');
+    });
+});
+
+Route::middleware(['auth', 'moderator'])->group(function() {
+    Route::prefix('users')->group(function () {
+        Route::get(
+            '/list',
+            fn () => view('users.list', ['users' => User::all()])
+        )->name('users.list.ui');
     });
 });
 
