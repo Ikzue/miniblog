@@ -2,9 +2,10 @@
 
 @section('content')
 <!-- Post title -->
-<div class='flex items-center space-x-2'>
+<div>
     <h1 id='title'>
     </h1>
+    <h2 id='username'></h2>
 </div>
 
 <!-- Edit / Delete -->
@@ -108,11 +109,13 @@
         const postResponse = await fetch(`/api/posts/${postId}`);
         const title = document.getElementById('title');
         const content = document.getElementById('content');
+        const username = document.getElementById('username');
 
         if (postResponse.ok) {
             const post = await postResponse.json();
             title.textContent = post.title;
             content.textContent = post.content;
+            username.textContent = `By ${post.user.display}`;
 
             // Check if user can edit a post, delete a post, or create a comment and show/hide elements accordingly
             const editLink = document.getElementById('edit-link');
