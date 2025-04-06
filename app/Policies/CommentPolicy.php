@@ -18,6 +18,11 @@ class CommentPolicy
         return null;
     }
 
+    public function getUserComments(User $user)
+    {
+        return $user->role === Role::MODERATOR->value;
+    }
+
     // Writers need to be post owner, readers can comment on all posts
     public function create(User $user, Post $post): bool
     {

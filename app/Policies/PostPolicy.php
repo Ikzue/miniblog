@@ -16,6 +16,11 @@ class PostPolicy
         return null;
     }
 
+    public function getUserPosts(User $user)
+    {
+        return $user->role === Role::MODERATOR->value;
+    }
+
     // Writers can create posts
     public function create(User $user): bool
     {

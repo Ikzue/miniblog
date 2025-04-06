@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Comment;
 use App\Models\Post;
+use App\Models\User;
 use App\Http\Resources\CommentResource;
 
 class CommentController extends Controller
@@ -27,6 +28,17 @@ class CommentController extends Controller
         return CommentResource::collection($commentsList);
     }
 
+    // GET posts - List of posts for a given user
+    public function getUserComments(User $user)
+    {
+        $this->authorize('getUserComments', Comment::class);
+        $commentsList = Comment::with(['user:id,name,is_email_public,email', 'post:id,title'])
+        ->where('user_id', $user->id)
+        ->orderByDesc('created_at')
+        ->get();
+        
+        return CommentResource::collection($commentsList);
+    }
 
     // POST comments - Create
     public function store(Request $request)

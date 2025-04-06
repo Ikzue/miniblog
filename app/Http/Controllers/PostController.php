@@ -4,14 +4,24 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Post;
+use App\Models\User;
 use App\Http\Resources\PostResource;
 
 class PostController extends Controller
 {
-    // GET posts list
+    // GET posts - List of all posts
     public function index()
     {
         $postsList = Post::with('user:id,name,is_email_public,email')->orderByDesc('created_at')->get();
+
+        return PostResource::collection($postsList);
+    }
+
+    // GET posts - List of posts for a given user
+    public function getUserPosts(User $user)
+    {
+        $this->authorize('getUserPosts', Post::class);
+        $postsList = Post::with('user:id,name,is_email_public,email')->where('user_id', $user->id)->orderByDesc('created_at')->get();
         return PostResource::collection($postsList);
     }
 
