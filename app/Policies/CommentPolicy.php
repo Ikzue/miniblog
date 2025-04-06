@@ -18,7 +18,7 @@ class CommentPolicy
         return null;
     }
 
-    // Writers need to be post, readers can comment on all posts
+    // Writers need to be post owner, readers can comment on all posts
     public function create(User $user, Post $post): bool
     {
         if ($user->role === Role::WRITER->value) {

@@ -46,7 +46,7 @@ class ListPostTest extends TestCase
             'updated_at' => $post->updated_at->toDateTimeString(),
             'title' => $post->title,
             'content' => $post->content,
-            'can_comment' => false,
+            'can_comment' => true,
             'can_delete' => false,
             'can_update' => true,
             'user' => [
@@ -96,7 +96,7 @@ class ListPostTest extends TestCase
             'updated_at' => $postPrivate->updated_at->toDateTimeString(),
             'title' => $postPrivate->title,
             'content' => $postPrivate->content,
-            'can_comment' => false,
+            'can_comment' => true,
             'can_delete' => false,
             'can_update' => true,
             'user' => [
@@ -109,7 +109,7 @@ class ListPostTest extends TestCase
             'updated_at' => $postPublic->updated_at->toDateTimeString(),
             'title' => $postPublic->title,
             'content' => $postPublic->content,
-            'can_comment' => false,
+            'can_comment' => true,
             'can_delete' => false,
             'can_update' => false,
             'user' => [
