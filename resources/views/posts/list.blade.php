@@ -41,9 +41,9 @@
             posts.forEach(post => {
                 const postRow = document.createElement('tr');
                 let $id = post.id;
-                addCell(postRow, post, 'title', `/posts/details/${post.id}`);
-                addCell(postRow, post, 'content');
-                addCell(postRow, post, 'user.display');
+                addTableData(postRow, post, 'title', `/posts/details/${post.id}`);
+                addTableData(postRow, post, 'content');
+                addTableData(postRow, post, 'user.display');
                 postsTable.appendChild(postRow);
             })
         }
@@ -53,22 +53,5 @@
             document.body.after(error);
         }
     });
-
-    function addCell(postRow, post, attr, href=""){
-        const cell = document.createElement('td');
-        const attrVal = attr.split('.').reduce((props, key)=>props&&props[key]||null, post)
-        if (href) {
-            const a = document.createElement("a");
-            a.className = "clickable";
-            a.href = href;
-            a.textContent = attrVal;
-            cell.appendChild(a);
-        }
-        else{
-            cell.textContent = attrVal;
-        }
-
-        postRow.appendChild(cell);
-    }
 </script>
 @endsection

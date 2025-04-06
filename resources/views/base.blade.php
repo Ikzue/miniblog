@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>my-blog</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
@@ -17,9 +18,9 @@
         {{ Auth::user()->name }} ({{ Auth::user()->role }}) - 
         <a href="{{ route('posts.list.ui') }}">Posts</a>
         - <a href="{{ route('comments.list.ui') }}">My comments</a>
-        @if ( Auth::user()->role === App\Models\Enums\Role::MODERATOR->value )
+        @can('viewAny', App\Models\User::class)
         - <a href="{{ route('users.list.ui') }}">Users</a>
-        @endif
+        @endcan
     </nav>
     <hr>
     @section('content')

@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Models\Post;
 use App\Models\User;
+use App\Models\Enums\Role;
 
 /*
 |--------------------------------------------------------------------------
@@ -53,12 +54,24 @@ Route::middleware('auth')->group(function () {
     });
 });
 
-Route::middleware(['auth', 'moderator'])->group(function() {
+Route::middleware(['auth'])->group(function() {
     Route::prefix('users')->group(function () {
+        Route::get(
+            '/create',
+            fn () => view('users.create')
+        )->name('users.create.ui')->can('create', User::class);
         Route::get(
             '/list',
             fn () => view('users.list', ['users' => User::all()])
-        )->name('users.list.ui');
+        )->name('users.list.ui')->can('viewAny', User::class);;
+        Route::get(
+            '/details/{user}',
+            fn (User $user) => view('users.details', ['user' => $user])
+        )->name('users.details.ui')->can('view', 'user');
+        Route::get(
+            '/update/{user}',
+            fn (User $user) => view('users.update', ['user' => $user, 'roles' => Role::cases()])
+        )->name('users.update.ui')->can('update', 'user');
     });
 });
 

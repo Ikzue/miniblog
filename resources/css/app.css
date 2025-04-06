@@ -29,6 +29,7 @@ a {
 
 .clickable {
     color: rgb(37 99 235 / 0.8) !important;
+    cursor: pointer;
 }
 
 .clickable:visited {
